@@ -1,0 +1,41 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - rabbitmq_network
+
+  producer:
+    restart: always
+    build:
+      context: ./producer
+      dockerfile: ./Dockerfile
+    container_name: producer
+    depends_on:
+      - rabbitmq
+    networks:
+      - rabbitmq_network
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python producer.py
+
+  consumer:
+    restart: always
+    build:
+      context: ./consumer
+      dockerfile: ./Dockerfile
+    container_name: consumer
+    depends_on:
+      - rabbitmq
+    networks:
+      - rabbitmq_network
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python consumer.py
+
+networks:
+  rabbitmq_network:
+    driver: bridge
