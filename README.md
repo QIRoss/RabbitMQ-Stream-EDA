@@ -8,3 +8,5 @@
 ```
 docker compose up --build
 ```
+
+Added Terraform code to test docker host network using VPC
